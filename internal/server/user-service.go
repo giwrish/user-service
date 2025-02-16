@@ -8,13 +8,15 @@ import (
 	"time"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type UserService struct {
 	server *http.Server
+	db     *pgxpool.Pool
 }
 
-func NewUserService() *UserService {
+func NewUserService(pool *pgxpool.Pool) *UserService {
 	port := os.Getenv("SERVER_PORT")
 
 	if port == "" {
@@ -33,6 +35,7 @@ func NewUserService() *UserService {
 	}
 	return &UserService{
 		server: server,
+		db:     pool,
 	}
 }
 
