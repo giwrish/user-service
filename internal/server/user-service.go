@@ -2,11 +2,12 @@ package server
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net/http"
-	"os"
 	"time"
 
+	"github.com/giwrish/user-service/internal/config"
 	"github.com/go-chi/chi/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -16,23 +17,18 @@ type UserService struct {
 	db     *pgxpool.Pool
 }
 
-func NewUserService(pool *pgxpool.Pool) *UserService {
-	port := os.Getenv("SERVER_PORT")
-
-	if port == "" {
-		log.Print("Could not find server port, starting on default port 8080")
-		port = ":8080"
-	}
+func NewUserService(cfg *config.ServerConfig, pool *pgxpool.Pool) *UserService {
 
 	handler := RegisterRoutes(chi.NewRouter())
 
 	server := &http.Server{
-		Addr:         port,
+		Addr:         fmt.Sprintf(":%d", cfg.Port),
 		Handler:      handler,
-		ReadTimeout:  time.Second * 10,
-		IdleTimeout:  time.Second * 10,
-		WriteTimeout: time.Second * 10,
+		ReadTimeout:  time.Second * time.Duration(cfg.ReadTimeout),
+		IdleTimeout:  time.Second * time.Duration(cfg.IdleTimeout),
+		WriteTimeout: time.Second * time.Duration(cfg.WriteTimeout),
 	}
+
 	return &UserService{
 		server: server,
 		db:     pool,
@@ -44,7 +40,7 @@ func (svc *UserService) Start() error {
 	return svc.server.ListenAndServe()
 }
 
-func (s *UserService) Shutdown(ctx context.Context) error {
+func (svc *UserService) Shutdown(ctx context.Context) error {
 	log.Println("Gracefully shutting down server...")
-	return s.server.Shutdown(ctx)
+	return svc.server.Shutdown(ctx)
 }
