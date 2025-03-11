@@ -10,7 +10,7 @@ import (
 
 func RegisterRoutes(router *chi.Mux, queries *repository.Queries) http.Handler {
 
-	users := handlers.NewUserHander(queries)
+	users := handlers.NewUserHandler(queries)
 
 	router.Route("/api/user", func(router chi.Router) {
 		router.Post("/", users.CreateUser)

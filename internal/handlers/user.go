@@ -28,7 +28,7 @@ type Users struct {
 	queries *repository.Queries
 }
 
-func NewUserHander(queries *repository.Queries) *Users {
+func NewUserHandler(queries *repository.Queries) *Users {
 	return &Users{
 		queries: queries,
 	}
