@@ -36,7 +36,7 @@ func NewUserService(cfg *config.ServerConfig, queries *repository.Queries) *User
 }
 
 func (svc *UserService) Start() error {
-	log.Println("Starting server on :8080")
+	log.Printf("Starting server on %v", svc.server.Addr)
 	return svc.server.ListenAndServe()
 }
 
