@@ -1,11 +1,11 @@
 server:
   port: 8080
-  read_timeout: 10  
+  read_timeout: 10
   write_timeout: 10
   idle_timeout: 10
 
 database:
-  url : "postgres://admin:<your_password>@localhost:5432/user_service?sslmode=disable"
+  url : "postgres://admin:secret123@localhost:5432/user_service?sslmode=disable"
   max_open_conn: 10
   max_idle_conn: 10
   max_conn_life: 5

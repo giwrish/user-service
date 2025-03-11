@@ -8,18 +8,18 @@ import (
 	"time"
 
 	"github.com/giwrish/user-service/internal/config"
+	"github.com/giwrish/user-service/internal/repository"
 	"github.com/go-chi/chi/v5"
-	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type UserService struct {
 	server *http.Server
-	db     *pgxpool.Pool
+	db     *repository.Queries
 }
 
-func NewUserService(cfg *config.ServerConfig, pool *pgxpool.Pool) *UserService {
+func NewUserService(cfg *config.ServerConfig, queries *repository.Queries) *UserService {
 
-	handler := RegisterRoutes(chi.NewRouter())
+	handler := RegisterRoutes(chi.NewRouter(), queries)
 
 	server := &http.Server{
 		Addr:         fmt.Sprintf(":%d", cfg.Port),
@@ -31,7 +31,7 @@ func NewUserService(cfg *config.ServerConfig, pool *pgxpool.Pool) *UserService {
 
 	return &UserService{
 		server: server,
-		db:     pool,
+		db:     queries,
 	}
 }
 

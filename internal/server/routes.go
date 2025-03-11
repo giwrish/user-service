@@ -4,13 +4,17 @@ import (
 	"net/http"
 
 	"github.com/giwrish/user-service/internal/handlers"
+	"github.com/giwrish/user-service/internal/repository"
 	"github.com/go-chi/chi/v5"
 )
 
-func RegisterRoutes(router *chi.Mux) http.Handler {
+func RegisterRoutes(router *chi.Mux, queries *repository.Queries) http.Handler {
+
+	users := handlers.NewUserHander(queries)
+
 	router.Route("/api/user", func(router chi.Router) {
-		router.Post("/", handlers.CreateUser)
-		router.Get("/{username}", handlers.GetUser)
+		router.Post("/", users.CreateUser)
+		router.Get("/{username}", users.GetUser)
 	})
 	return router
 }

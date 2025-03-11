@@ -10,6 +10,7 @@ import (
 
 	"github.com/giwrish/user-service/internal/config"
 	"github.com/giwrish/user-service/internal/database"
+	"github.com/giwrish/user-service/internal/repository"
 	"github.com/giwrish/user-service/internal/server"
 )
 
@@ -19,7 +20,9 @@ func main() {
 	dbPool := database.Connect(&cfg.DB)
 	defer dbPool.Close()
 
-	svc := server.NewUserService(&cfg.Server, dbPool)
+	queries := repository.New(dbPool)
+
+	svc := server.NewUserService(&cfg.Server, queries)
 
 	stop := make(chan os.Signal, 1)
 
