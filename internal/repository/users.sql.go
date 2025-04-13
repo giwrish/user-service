@@ -70,3 +70,34 @@ func (q *Queries) GetUser(ctx context.Context, username string) (GetUserRow, err
 	err := row.Scan(&i.Username, &i.CreatedAt, &i.UpdatedAt)
 	return i, err
 }
+
+const updateUserPassword = `-- name: UpdateUserPassword :one
+UPDATE users
+SET password = $1, updated_at = $2
+WHERE username = $3
+RETURNING username
+`
+
+type UpdateUserPasswordParams struct {
+	Password  string    `json:"password"`
+	UpdatedAt time.Time `json:"updated_at"`
+	Username  string    `json:"username"`
+}
+
+func (q *Queries) UpdateUserPassword(ctx context.Context, arg UpdateUserPasswordParams) (string, error) {
+	row := q.db.QueryRow(ctx, updateUserPassword, arg.Password, arg.UpdatedAt, arg.Username)
+	var username string
+	err := row.Scan(&username)
+	return username, err
+}
+
+const userExists = `-- name: UserExists :one
+SELECT EXISTS(SELECT 1 FROM users WHERE username = $1)
+`
+
+func (q *Queries) UserExists(ctx context.Context, username string) (bool, error) {
+	row := q.db.QueryRow(ctx, userExists, username)
+	var exists bool
+	err := row.Scan(&exists)
+	return exists, err
+}

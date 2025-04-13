@@ -15,6 +15,8 @@ func RegisterRoutes(router *chi.Mux, queries *repository.Queries) http.Handler {
 	router.Route("/api/user", func(router chi.Router) {
 		router.Post("/", users.CreateUser)
 		router.Get("/{username}", users.GetUser)
+		router.Patch("/{username}", users.UpdateUser)
+		router.Delete("/{username}", users.DeleteUser)
 	})
 	return router
 }
